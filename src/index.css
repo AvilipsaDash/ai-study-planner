@@ -1,0 +1,539 @@
+/* =========================================
+   AI STUDY PLANNER
+   Modern colorful design
+========================================= */
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1e293b;
+  background: #eef2ff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --blue: #3b82f6;
+
+  --background: #eef2ff;
+  --card: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #dbe3f0;
+
+  --error-bg: #fff1f2;
+  --error-border: #fecdd3;
+  --error-text: #be123c;
+
+  --plan-bg: #f5f3ff;
+  --plan-border: #8b5cf6;
+}
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(99, 102, 241, 0.25),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(236, 72, 153, 0.18),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #eef2ff 0%,
+      #f8fafc 50%,
+      #fdf2f8 100%
+    );
+
+  color: var(--text);
+}
+
+/* =========================================
+   ROOT
+========================================= */
+
+#root {
+  min-height: 100vh;
+}
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+main {
+  width: 92%;
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 55px 0 80px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+h1 {
+  margin: 0;
+
+  text-align: center;
+
+  font-size: 46px;
+  font-weight: 800;
+
+  letter-spacing: -1.5px;
+
+  background: linear-gradient(
+    90deg,
+    #4f46e5,
+    #7c3aed,
+    #db2777
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+main > p {
+  max-width: 650px;
+
+  margin: 14px auto 38px;
+
+  text-align: center;
+
+  color: var(--muted);
+
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+/* =========================================
+   FORM CARD
+========================================= */
+
+form {
+  position: relative;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  padding: 32px;
+
+  border-radius: 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  box-shadow:
+    0 20px 45px rgba(79, 70, 229, 0.12),
+    0 5px 15px rgba(15, 23, 42, 0.06);
+
+  backdrop-filter: blur(10px);
+
+  text-align: left;
+}
+
+/* Small colorful line above form */
+
+form::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 10%;
+  right: 10%;
+
+  height: 4px;
+
+  border-radius: 0 0 10px 10px;
+
+  background: linear-gradient(
+    90deg,
+    #6366f1,
+    #8b5cf6,
+    #ec4899
+  );
+}
+
+/* =========================================
+   LABELS
+========================================= */
+
+label {
+  display: block;
+
+  margin-top: 20px;
+  margin-bottom: 8px;
+
+  color: #334155;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+label:first-of-type {
+  margin-top: 0;
+}
+
+/* =========================================
+   INPUTS
+========================================= */
+
+input,
+select {
+  width: 100%;
+
+  height: 50px;
+
+  padding: 0 15px;
+
+  border: 2px solid #e2e8f0;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #1e293b;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+input:hover,
+select:hover {
+  border-color: #a5b4fc;
+}
+
+input:focus,
+select:focus {
+  border-color: #6366f1;
+
+  box-shadow:
+    0 0 0 4px rgba(99, 102, 241, 0.12);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   GENERATE BUTTON
+========================================= */
+
+form > button {
+  width: 100%;
+
+  height: 54px;
+
+  margin-top: 28px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed,
+    #db2777
+  );
+
+  color: white;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 20px rgba(99, 102, 241, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+form > button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 15px 28px rgba(99, 102, 241, 0.35);
+}
+
+form > button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+form > button:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+}
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
+.error-message {
+  margin-bottom: 22px;
+
+  padding: 16px 18px;
+
+  border: 1px solid var(--error-border);
+
+  border-radius: 12px;
+
+  background: var(--error-bg);
+
+  color: var(--error-text);
+
+  box-shadow:
+    0 5px 15px rgba(190, 18, 60, 0.08);
+}
+
+.error-message p {
+  margin: 0 0 12px;
+
+  line-height: 1.5;
+}
+
+.error-message button {
+  width: auto;
+
+  margin: 0;
+
+  padding: 9px 16px;
+
+  border: none;
+
+  border-radius: 7px;
+
+  background: #e11d48;
+
+  color: white;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.error-message button:hover {
+  background: #be123c;
+}
+
+/* =========================================
+   STUDY PLAN CARD
+========================================= */
+
+section[aria-label="Study plan"] {
+  margin-top: 35px;
+
+  padding: 32px;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  border-radius: 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  box-shadow:
+    0 20px 45px rgba(79, 70, 229, 0.12),
+    0 5px 15px rgba(15, 23, 42, 0.06);
+
+  text-align: left;
+}
+
+/* Study plan heading */
+
+section[aria-label="Study plan"] h2 {
+  margin: 0 0 24px;
+
+  font-size: 29px;
+  font-weight: 800;
+
+  color: #4f46e5;
+}
+
+/* Information */
+
+section[aria-label="Study plan"] > p {
+  margin: 7px 0;
+
+  padding: 12px 14px;
+
+  border-radius: 9px;
+
+  background: #f8fafc;
+
+  border: 1px solid #eef2f7;
+
+  line-height: 1.5;
+}
+
+section[aria-label="Study plan"] strong {
+  color: #334155;
+}
+
+/* Personalized plan heading */
+
+section[aria-label="Study plan"] h3 {
+  margin: 30px 0 16px;
+
+  font-size: 22px;
+
+  color: #7c3aed;
+}
+
+/* =========================================
+   AI PLAN CONTENT
+========================================= */
+
+section[aria-label="Study plan"] > div {
+  padding: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f5f3ff,
+      #eef2ff,
+      #fdf2f8
+    );
+
+  border-left: 5px solid #8b5cf6;
+
+  border-radius: 12px;
+
+  overflow-wrap: anywhere;
+
+  box-shadow:
+    inset 0 0 20px rgba(139, 92, 246, 0.04);
+}
+
+section[aria-label="Study plan"] > div p {
+  margin: 0 0 10px;
+
+  line-height: 1.7;
+}
+
+section[aria-label="Study plan"] > div p:last-child {
+  margin-bottom: 0;
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.4);
+
+  outline-offset: 3px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+  main {
+    width: 94%;
+
+    padding: 35px 0 55px;
+  }
+
+  h1 {
+    font-size: 34px;
+
+    letter-spacing: -1px;
+  }
+
+  main > p {
+    font-size: 16px;
+
+    margin-bottom: 28px;
+  }
+
+  form {
+    padding: 23px;
+
+    border-radius: 17px;
+  }
+
+  section[aria-label="Study plan"] {
+    padding: 23px;
+
+    border-radius: 17px;
+  }
+
+  section[aria-label="Study plan"] h2 {
+    font-size: 25px;
+  }
+
+  section[aria-label="Study plan"] h3 {
+    font-size: 20px;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+  main {
+    width: 95%;
+
+    padding-top: 25px;
+  }
+
+  h1 {
+    font-size: 29px;
+  }
+
+  form,
+  section[aria-label="Study plan"] {
+    padding: 18px;
+  }
+
+  input,
+  select {
+    height: 46px;
+  }
+
+  form > button {
+    height: 50px;
+    font-size: 16px;
+  }
+}

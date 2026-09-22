@@ -1,0 +1,164 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #1f2937;
+}
+
+main {
+  width: 90%;
+  max-width: 900px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin-bottom: 8px;
+  font-size: 32px;
+}
+
+h2 {
+  margin-top: 35px;
+}
+
+h3 {
+  margin-top: 25px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+label {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+input:focus,
+select:focus {
+  outline: 3px solid #bfdbfe;
+  border-color: #2563eb;
+}
+
+button {
+  margin-top: 15px;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.error-message {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+}
+
+.error-message button {
+  background: #dc2626;
+  margin-top: 5px;
+}
+
+section {
+  margin-top: 35px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.study-plan-content {
+  margin-top: 20px;
+  padding: 25px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow-wrap: break-word;
+}
+
+.study-plan-content h1 {
+  font-size: 28px;
+}
+
+.study-plan-content h2 {
+  font-size: 23px;
+  color: #1e40af;
+}
+
+.study-plan-content h3 {
+  font-size: 20px;
+}
+
+.study-plan-content ul,
+.study-plan-content ol {
+  padding-left: 25px;
+}
+
+.study-plan-content li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.study-plan-content code {
+  background: #e5e7eb;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.study-plan-content hr {
+  border: none;
+  border-top: 1px solid #d1d5db;
+  margin: 25px 0;
+}
+
+@media (max-width: 600px) {
+  main {
+    width: 94%;
+    margin: 20px auto;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  .study-plan-content {
+    padding: 15px;
+  }
+}
