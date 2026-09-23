@@ -1,5 +1,9 @@
 # AI Study Planner
 
+## Live Demo
+
+[Open the deployed AI Study Planner](https://ai-study-planner-omega-one.vercel.app/)
+
 An AI-enhanced study planning application that creates personalized study plans based on a student's subject, topic, available study time, difficulty level, and exam date.
 
 ## Project Overview
@@ -81,6 +85,17 @@ When Gemini cannot generate a response, a fallback study plan is displayed inste
 * HTML
 * CSS
 
+## Architecture
+
+The application uses a React frontend built with Vite.
+
+- `App.jsx` — manages the form, input validation, AI request, fallback logic, and displays the study plan.
+- `ReactMarkdown` — renders the generated study plan.
+- `@google/genai` — communicates with Gemini AI.
+- `App.test.jsx` — contains automated component tests.
+- `vite.config.js` — configures the Vite development and testing environment.
+- `.env` — stores the Gemini API key locally and is not committed to Git.
+
 ## Project Structure
 
 ```text
@@ -119,7 +134,7 @@ npm install
 
 ### 3. Configure the Gemini API key
 
-Create a `.env.local` file in the project root:
+Create a `.env` file in the project root:
 
 ```text
 VITE_GEMINI_API_KEY=your_gemini_api_key_here
@@ -156,6 +171,18 @@ The tests cover:
 * Exam-date validation
 * Difficulty selection
 
+### Test Results
+
+All 6 automated tests pass successfully.
+
+Test coverage measured using Vitest's V8 coverage provider:
+
+- Statements: 54.54%
+- Branches: 50%
+- Functions: 77.77%
+- Lines: 55.38%
+
+The tests verify the main form rendering and input-validation behavior of the study planner.
 ## Production Build
 
 Create a production build with:
@@ -197,6 +224,28 @@ If Gemini returns an error or is temporarily unavailable, the application genera
 
 This prevents the application from becoming unusable because of a temporary external AI-service failure.
 
+## Deployment Checklist
+
+- [x] Application runs successfully locally
+- [x] Production build completed
+- [x] Application deployed to Vercel
+- [x] Live deployment tested
+- [x] Gemini API environment variable configured
+- [x] API failure and fallback behavior tested
+- [x] User input validation tested
+- [x] Lighthouse audit completed
+- [x] Lighthouse Performance score: 98
+- [x] Lighthouse Accessibility score: 100
+- [x] Lighthouse Best Practices score: 100
+- [x] Lighthouse SEO score: 90
+- [x] Automated tests passing: 6/6
+- [x] Test coverage checked
+- [x] README documentation completed
+
+### Rollback Plan
+
+If a production deployment introduces a problem, the previous working Vercel deployment can be restored through the Vercel dashboard. The Git repository can also be reverted to the last known working commit and redeployed.
+
 ## Known Limitation
 
 The Gemini API is subject to API availability and rate limits. When the service is unavailable or the request limit is reached, the application uses its fallback study-plan generation.
@@ -215,6 +264,14 @@ Possible future improvements include:
 * Study-plan history
 * Improved AI response validation
 * Deployment with a secure backend API layer
+
+## Reflection
+
+The hardest part of this project was making the AI integration reliable instead of only making it work in the normal case. Initially, the application could generate a study plan successfully, but production readiness required thinking about invalid inputs, API failures, missing API keys, rate limits, and situations where the AI does not return a usable response. Building the fallback study-plan system helped me understand that an AI-powered application should still provide useful functionality when an external AI service is unavailable.
+
+If I were building the project again, I would plan the testing and error-handling structure earlier. I would also consider using a backend API layer instead of exposing an AI API key through a frontend environment variable. This would provide a more secure architecture for a production application.
+
+One thing that surprised me was how much work is involved after the main feature is already working. Building the study-plan generator was only one part of the project. Testing, accessibility, Lighthouse performance, error handling, deployment, documentation, and rollback planning were also important parts of making the application production-ready. The project helped me understand that shipping a frontend application involves much more than writing the main feature.
 
 ## Author
 
