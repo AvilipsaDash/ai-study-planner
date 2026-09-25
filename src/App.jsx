@@ -1,6 +1,36 @@
 import { useState, Suspense } from "react";
 import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from "react-markdown";
+
+const defaultSettings = {
+  dailyGoal: "2",
+  sessionLength: "50",
+  breakLength: "10",
+  reminderTime: "18:00",
+  studyDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+};
+
+const weekDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+function loadSettings() {
+  try {
+    const savedSettings = window.localStorage.getItem("study-planner-settings");
+    return savedSettings
+      ? { ...defaultSettings, ...JSON.parse(savedSettings) }
+      : defaultSettings;
+  } catch {
+    return defaultSettings;
+  }
+}
+
 function createFallbackPlan(
   subject,
   topic,
@@ -67,15 +97,86 @@ This is a practical study plan for **${subject} - ${topic}**. It is designed for
 }
 
 function App() {
+  const [settings, setSettings] = useState(loadSettings);
+  const [settingsDraft, setSettingsDraft] = useState(loadSettings);
+  const [settingsMessage, setSettingsMessage] = useState("");
+  const [settingsError, setSettingsError] = useState("");
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
-  const [studyTime, setStudyTime] = useState("");
+  const [studyTime, setStudyTime] = useState(() => loadSettings().dailyGoal);
   const [difficulty, setDifficulty] = useState("Beginner");
   const [examDate, setExamDate] = useState("");
 
   const [error, setError] = useState("");
   const [studyPlan, setStudyPlan] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const handleSettingsChange = (event) => {
+    const { name, value } = event.target;
+    setSettingsDraft((currentSettings) => ({
+      ...currentSettings,
+      [name]: value,
+    }));
+    setSettingsMessage("");
+    setSettingsError("");
+  };
+
+  const handleStudyDaysChange = (event) => {
+    const { checked, value } = event.target;
+    setSettingsDraft((currentSettings) => ({
+      ...currentSettings,
+      studyDays: checked
+        ? [...currentSettings.studyDays, value]
+        : currentSettings.studyDays.filter((day) => day !== value),
+    }));
+    setSettingsMessage("");
+    setSettingsError("");
+  };
+
+  const handleSettingsSubmit = (event) => {
+    event.preventDefault();
+    const dailyGoal = Number(settingsDraft.dailyGoal);
+    const sessionLength = Number(settingsDraft.sessionLength);
+    const breakLength = Number(settingsDraft.breakLength);
+
+    if (
+      dailyGoal < 1 ||
+      dailyGoal > 12 ||
+      sessionLength < 15 ||
+      sessionLength > 180 ||
+      breakLength < 5 ||
+      breakLength > 60
+    ) {
+      setSettingsError(
+        "Daily goal must be 1-12 hours, sessions 15-180 minutes, and breaks 5-60 minutes."
+      );
+      setSettingsMessage("");
+      return;
+    }
+
+    if (settingsDraft.studyDays.length === 0) {
+      setSettingsError("Choose at least one preferred study day.");
+      setSettingsMessage("");
+      return;
+    }
+
+    const nextSettings = {
+      ...settingsDraft,
+      dailyGoal: String(dailyGoal),
+      sessionLength: String(sessionLength),
+      breakLength: String(breakLength),
+    };
+
+    setSettings(nextSettings);
+    setSettingsDraft(nextSettings);
+    setStudyTime(String(dailyGoal));
+    window.localStorage.setItem(
+      "study-planner-settings",
+      JSON.stringify(nextSettings)
+    );
+    setSettingsError("");
+    setSettingsMessage("Settings saved. Your next plan will use this daily goal.");
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -266,7 +367,120 @@ The response must contain exactly ${daysRemaining} study days.
       <p>
         Create a personalized study plan with the help of Gemini AI.
       </p>
+
+      <section className="settings-panel" aria-label="Study settings">
+        <div className="settings-heading">
+          <div>
+            <p className="eyebrow">Your routine</p>
+            <h2>Study settings</h2>
+            <p>
+              Set a rhythm that works for you. Your {settings.dailyGoal}-hour
+              daily goal will prefill the planner.
+            </p>
+          </div>
+          <span className="settings-badge">Saved on this device</span>
+        </div>
+
+        <form
+          className="settings-form"
+          onSubmit={handleSettingsSubmit}
+          aria-label="Study settings form"
+          noValidate
+        >
+          {settingsError && (
+            <div className="settings-feedback settings-feedback-error" role="alert">
+              {settingsError}
+            </div>
+          )}
+
+          {settingsMessage && (
+            <div className="settings-feedback settings-feedback-success" role="status">
+              {settingsMessage}
+            </div>
+          )}
+
+          <div className="settings-fields">
+            <div className="field-group">
+              <label htmlFor="dailyGoal">Daily study goal (hours)</label>
+              <input
+                id="dailyGoal"
+                name="dailyGoal"
+                type="number"
+                min="1"
+                max="12"
+                value={settingsDraft.dailyGoal}
+                onChange={handleSettingsChange}
+              />
+              <span className="field-help">Used as the planner default.</span>
+            </div>
+
+            <div className="field-group">
+              <label htmlFor="sessionLength">Focus session (minutes)</label>
+              <input
+                id="sessionLength"
+                name="sessionLength"
+                type="number"
+                min="15"
+                max="180"
+                value={settingsDraft.sessionLength}
+                onChange={handleSettingsChange}
+              />
+              <span className="field-help">Choose a focused working block.</span>
+            </div>
+
+            <div className="field-group">
+              <label htmlFor="breakLength">Break length (minutes)</label>
+              <input
+                id="breakLength"
+                name="breakLength"
+                type="number"
+                min="5"
+                max="60"
+                value={settingsDraft.breakLength}
+                onChange={handleSettingsChange}
+              />
+              <span className="field-help">A short reset between sessions.</span>
+            </div>
+
+            <div className="field-group">
+              <label htmlFor="reminderTime">Daily reminder</label>
+              <input
+                id="reminderTime"
+                name="reminderTime"
+                type="time"
+                value={settingsDraft.reminderTime}
+                onChange={handleSettingsChange}
+              />
+              <span className="field-help">When you would like to begin.</span>
+            </div>
+          </div>
+
+          <fieldset className="study-days-fieldset">
+            <legend>Preferred study days</legend>
+            <div className="day-options">
+              {weekDays.map((day) => (
+                <label className="day-option" htmlFor={`day-${day}`} key={day}>
+                  <input
+                    id={`day-${day}`}
+                    type="checkbox"
+                    value={day}
+                    checked={settingsDraft.studyDays.includes(day)}
+                    onChange={handleStudyDaysChange}
+                  />
+                  <span>{day.slice(0, 3)}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <button type="submit" className="settings-save-button">
+            Save settings
+          </button>
+        </form>
+      </section>
+
       <form
+          className="planner-form"
           onSubmit={handleSubmit}
           aria-busy={loading}
           aria-label="Create a personalized study plan"

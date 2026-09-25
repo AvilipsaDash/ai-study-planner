@@ -301,6 +301,186 @@ form > button:disabled {
 }
 
 /* =========================================
+   SETTINGS
+========================================= */
+
+.settings-panel {
+  margin: 0 0 28px;
+  padding: 27px 30px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.09);
+  text-align: left;
+}
+
+.settings-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.settings-heading h2 {
+  margin: 0 0 5px;
+  color: #312e81;
+  font-size: 25px;
+}
+
+.settings-heading p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.eyebrow {
+  margin: 0 0 5px;
+  color: #db2777;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.settings-badge {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.settings-form {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.settings-form::before {
+  display: none;
+}
+
+.settings-fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field-group label {
+  margin: 0 0 7px;
+  font-size: 13px;
+}
+
+.field-group input {
+  height: 45px;
+  padding: 0 11px;
+  font-size: 15px;
+}
+
+.field-help {
+  display: block;
+  margin-top: 6px;
+  color: #94a3b8;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.study-days-fieldset {
+  margin: 22px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.study-days-fieldset legend {
+  margin-bottom: 10px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.day-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.day-option {
+  position: relative;
+  margin: 0;
+  cursor: pointer;
+}
+
+.day-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.day-option span {
+  display: block;
+  min-width: 49px;
+  padding: 9px 10px;
+  border: 1px solid #dbe3f0;
+  border-radius: 9px;
+  background: #fff;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  transition: 0.2s ease;
+}
+
+.day-option input:checked + span {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #4338ca;
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.12);
+}
+
+.day-option input:focus-visible + span {
+  outline: 3px solid rgba(99, 102, 241, 0.3);
+  outline-offset: 2px;
+}
+
+.settings-save-button {
+  width: auto !important;
+  height: 43px !important;
+  margin-top: 22px !important;
+  padding: 0 18px !important;
+  font-size: 14px !important;
+}
+
+.settings-feedback {
+  margin-bottom: 15px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.settings-feedback-error {
+  border: 1px solid var(--error-border);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.settings-feedback-success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+/* =========================================
    ERROR MESSAGE
 ========================================= */
 
@@ -492,6 +672,24 @@ select:focus-visible {
     border-radius: 17px;
   }
 
+  .settings-panel {
+    padding: 22px;
+    border-radius: 17px;
+  }
+
+  .settings-heading {
+    display: block;
+  }
+
+  .settings-badge {
+    display: inline-block;
+    margin-top: 14px;
+  }
+
+  .settings-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   section[aria-label="Study plan"] {
     padding: 23px;
 
@@ -530,6 +728,14 @@ select:focus-visible {
   input,
   select {
     height: 46px;
+  }
+
+  .settings-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-panel {
+    padding: 18px;
   }
 
   form > button {

@@ -1,7 +1,11 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect } from "vitest";
 import App from "./App";
+
+afterEach(() => {
+  window.localStorage.clear();
+});
 
 describe("AI Study Planner", () => {
   it("shows the study planner form", () => {
@@ -175,5 +179,42 @@ describe("AI Study Planner", () => {
     });
 
     expect(difficulty).toHaveValue("Advanced");
+  });
+
+  it("saves valid study settings and updates the planner default", () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Daily study goal (hours)"), {
+      target: { value: "4" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Save settings" })
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Settings saved"
+    );
+    expect(
+      screen.getByLabelText("Available study time (hours per day)")
+    ).toHaveValue(4);
+    expect(window.localStorage.getItem("study-planner-settings")).toContain(
+      '"dailyGoal":"4"'
+    );
+  });
+
+  it("rejects settings outside the supported ranges", () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Focus session (minutes)"), {
+      target: { value: "10" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Save settings" })
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "sessions 15-180 minutes"
+    );
+    expect(window.localStorage.getItem("study-planner-settings")).toBeNull();
   });
 });
