@@ -34,6 +34,67 @@ describe("AI Study Planner", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows the settings form with accessible controls", () => {
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: "Settings" })
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Student name")).toBeInTheDocument();
+    expect(screen.getByLabelText("Daily study hours")).toBeInTheDocument();
+    expect(screen.getByLabelText("Preferred study time")).toBeInTheDocument();
+  });
+
+  it("requires a non-whitespace student name", () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Daily study hours"), {
+      target: { value: "2" },
+    });
+    fireEvent.change(screen.getByLabelText("Student name"), {
+      target: { value: "   " },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save Settings" }));
+
+    expect(
+      screen.getByText("Student name is required.")
+    ).toBeInTheDocument();
+  });
+
+  it("rejects daily study hours outside the 1 to 12 range", () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Student name"), {
+      target: { value: "Alex" },
+    });
+    fireEvent.change(screen.getByLabelText("Daily study hours"), {
+      target: { value: "13" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save Settings" }));
+
+    expect(
+      screen.getByText("Daily study hours must be between 1 and 12.")
+    ).toBeInTheDocument();
+  });
+
+  it("saves valid settings and the selected preferred study time", () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Student name"), {
+      target: { value: "Alex" },
+    });
+    fireEvent.change(screen.getByLabelText("Daily study hours"), {
+      target: { value: "2" },
+    });
+    fireEvent.change(screen.getByLabelText("Preferred study time"), {
+      target: { value: "Morning" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save Settings" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("Settings saved.");
+    expect(screen.getByLabelText("Preferred study time")).toHaveValue("Morning");
+  });
+
   it("shows an error when required fields are empty", () => {
     render(<App />);
 
