@@ -1,6 +1,9 @@
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
+import { describe, it, expect, vi } from "vitest";
+
 import App from "./App";
 
 describe("AI Study Planner", () => {
@@ -12,7 +15,6 @@ describe("AI Study Planner", () => {
     ).toBeInTheDocument();
 
     expect(screen.getByLabelText("Subject")).toBeInTheDocument();
-
     expect(screen.getByLabelText("Topic")).toBeInTheDocument();
 
     expect(
@@ -32,67 +34,6 @@ describe("AI Study Planner", () => {
         name: "Generate Study Plan",
       })
     ).toBeInTheDocument();
-  });
-
-  it("shows the settings form with accessible controls", () => {
-    render(<App />);
-
-    expect(
-      screen.getByRole("heading", { name: "Settings" })
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText("Student name")).toBeInTheDocument();
-    expect(screen.getByLabelText("Daily study hours")).toBeInTheDocument();
-    expect(screen.getByLabelText("Preferred study time")).toBeInTheDocument();
-  });
-
-  it("requires a non-whitespace student name", () => {
-    render(<App />);
-
-    fireEvent.change(screen.getByLabelText("Daily study hours"), {
-      target: { value: "2" },
-    });
-    fireEvent.change(screen.getByLabelText("Student name"), {
-      target: { value: "   " },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Save Settings" }));
-
-    expect(
-      screen.getByText("Student name is required.")
-    ).toBeInTheDocument();
-  });
-
-  it("rejects daily study hours outside the 1 to 12 range", () => {
-    render(<App />);
-
-    fireEvent.change(screen.getByLabelText("Student name"), {
-      target: { value: "Alex" },
-    });
-    fireEvent.change(screen.getByLabelText("Daily study hours"), {
-      target: { value: "13" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Save Settings" }));
-
-    expect(
-      screen.getByText("Daily study hours must be between 1 and 12.")
-    ).toBeInTheDocument();
-  });
-
-  it("saves valid settings and the selected preferred study time", () => {
-    render(<App />);
-
-    fireEvent.change(screen.getByLabelText("Student name"), {
-      target: { value: "Alex" },
-    });
-    fireEvent.change(screen.getByLabelText("Daily study hours"), {
-      target: { value: "2" },
-    });
-    fireEvent.change(screen.getByLabelText("Preferred study time"), {
-      target: { value: "Morning" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Save Settings" }));
-
-    expect(screen.getByRole("status")).toHaveTextContent("Settings saved.");
-    expect(screen.getByLabelText("Preferred study time")).toHaveValue("Morning");
   });
 
   it("shows an error when required fields are empty", () => {
@@ -121,9 +62,7 @@ describe("AI Study Planner", () => {
     });
 
     fireEvent.change(
-      screen.getByLabelText(
-        "Available study time (hours per day)"
-      ),
+      screen.getByLabelText("Available study time (hours per day)"),
       {
         target: { value: "15" },
       }
@@ -140,9 +79,7 @@ describe("AI Study Planner", () => {
     );
 
     expect(
-      screen.getByText(
-        "Study time must be between 1 and 12 hours."
-      )
+      screen.getByText("Study time must be between 1 and 12 hours.")
     ).toBeInTheDocument();
   });
 
@@ -158,9 +95,7 @@ describe("AI Study Planner", () => {
     });
 
     fireEvent.change(
-      screen.getByLabelText(
-        "Available study time (hours per day)"
-      ),
+      screen.getByLabelText("Available study time (hours per day)"),
       {
         target: { value: "0" },
       }
@@ -177,18 +112,14 @@ describe("AI Study Planner", () => {
     );
 
     expect(
-      screen.getByText(
-        "Study time must be between 1 and 12 hours."
-      )
+      screen.getByText("Study time must be between 1 and 12 hours.")
     ).toBeInTheDocument();
   });
 
   it("shows an error when the exam date is today", () => {
     render(<App />);
 
-    const today = new Date()
-      .toISOString()
-      .split("T")[0];
+    const today = new Date().toISOString().split("T")[0];
 
     fireEvent.change(screen.getByLabelText("Subject"), {
       target: { value: "Data Structures" },
@@ -199,9 +130,7 @@ describe("AI Study Planner", () => {
     });
 
     fireEvent.change(
-      screen.getByLabelText(
-        "Available study time (hours per day)"
-      ),
+      screen.getByLabelText("Available study time (hours per day)"),
       {
         target: { value: "2" },
       }
@@ -225,9 +154,7 @@ describe("AI Study Planner", () => {
   it("allows the user to change the difficulty level", () => {
     render(<App />);
 
-    const difficulty = screen.getByLabelText(
-      "Difficulty level"
-    );
+    const difficulty = screen.getByLabelText("Difficulty level");
 
     expect(difficulty).toHaveValue("Beginner");
 
@@ -236,5 +163,77 @@ describe("AI Study Planner", () => {
     });
 
     expect(difficulty).toHaveValue("Advanced");
+  });
+
+  it("shows the loading state when generating a study plan", async () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Subject"), {
+      target: { value: "Data Structures" },
+    });
+
+    fireEvent.change(screen.getByLabelText("Topic"), {
+      target: { value: "Arrays" },
+    });
+
+    fireEvent.change(
+      screen.getByLabelText("Available study time (hours per day)"),
+      {
+        target: { value: "2" },
+      }
+    );
+
+    fireEvent.change(screen.getByLabelText("Exam date"), {
+      target: { value: "2027-01-01" },
+    });
+
+    const button = screen.getByRole("button", {
+      name: "Generate Study Plan",
+    });
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", {
+          name: /Generating/i,
+        })
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("has the animated button with accessible state attributes", () => {
+    render(<App />);
+
+    const button = screen.getByRole("button", {
+      name: "Generate Study Plan",
+    });
+
+    expect(button).toHaveAttribute("type", "submit");
+    expect(button).toHaveAttribute("aria-disabled", "false");
+    expect(button).toHaveAttribute("aria-busy", "false");
+  });
+
+  it("keeps the generate button keyboard accessible", () => {
+    render(<App />);
+
+    const button = screen.getByRole("button", {
+      name: "Generate Study Plan",
+    });
+
+    button.focus();
+
+    expect(button).toHaveFocus();
+  });
+
+  it("uses the animated button component in the idle state", () => {
+    render(<App />);
+
+    const button = screen.getByRole("button", {
+      name: "Generate Study Plan",
+    });
+
+    expect(button).toHaveClass("animated-action-button");
+    expect(button).toHaveClass("idle");
   });
 });

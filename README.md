@@ -280,3 +280,9 @@ Avilipsa Dash
 ## License
 
 This project was created as an academic/project assignment.
+
+## Motion Design
+
+The Generate Study Plan button uses short, intentional transitions to communicate its state throughout the interaction. Hover and press states use approximately 180ms transitions, while loading and success feedback use slightly longer transitions so state changes remain noticeable without feeling slow. The animation primarily uses transform and opacity, which are compositor-friendly properties that avoid unnecessary layout changes.
+
+The loading state prevents repeated submissions, while success and error states provide clear visual feedback. Error feedback uses a brief shake when motion is enabled. When `prefers-reduced-motion` is enabled, decorative animations are reduced or removed while text and state feedback remain available.

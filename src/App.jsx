@@ -1,4 +1,5 @@
 import { useState, Suspense } from "react";
+import AnimatedActionButton from "./components/AnimatedActionButton";
 import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from "react-markdown";
 function createFallbackPlan(
@@ -72,40 +73,11 @@ function App() {
   const [studyTime, setStudyTime] = useState("");
   const [difficulty, setDifficulty] = useState("Beginner");
   const [examDate, setExamDate] = useState("");
-  const [studentName, setStudentName] = useState("");
-  const [dailyStudyHours, setDailyStudyHours] = useState("");
-  const [preferredStudyTime, setPreferredStudyTime] = useState("Morning");
 
   const [error, setError] = useState("");
-  const [settingsError, setSettingsError] = useState("");
-  const [settingsSaved, setSettingsSaved] = useState(false);
   const [studyPlan, setStudyPlan] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const handleSettingsSubmit = (event) => {
-    event.preventDefault();
-    setSettingsError("");
-    setSettingsSaved(false);
-
-    if (!studentName.trim()) {
-      setSettingsError("Student name is required.");
-      return;
-    }
-
-    if (studentName.trim().length < 2) {
-      setSettingsError("Student name must be at least 2 characters.");
-      return;
-    }
-
-    const hours = Number(dailyStudyHours);
-
-    if (!dailyStudyHours || hours < 1 || hours > 12) {
-      setSettingsError("Daily study hours must be between 1 and 12.");
-      return;
-    }
-
-    setSettingsSaved(true);
-  };
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -150,7 +122,7 @@ function App() {
       setError("Please select a future exam date.");
       return;
     }
-
+    setSuccess(false);
     setLoading(true);
 
     try {
@@ -238,6 +210,7 @@ The response must contain exactly ${daysRemaining} study days.
         daysRemaining: daysRemaining,
         aiPlan: generatedText,
       });
+      setSuccess(true);
     } catch (err) {
       console.error("Gemini error:", err);
 
@@ -259,6 +232,7 @@ The response must contain exactly ${daysRemaining} study days.
         daysRemaining: daysRemaining,
         aiPlan: fallbackPlan,
       });
+      setSuccess(true);
 
       const errorMessage = err?.message || "";
 
@@ -296,71 +270,6 @@ The response must contain exactly ${daysRemaining} study days.
       <p>
         Create a personalized study plan with the help of Gemini AI.
       </p>
-
-      <section className="settings-section" aria-label="Settings">
-        <h2>Settings</h2>
-
-        <form
-          onSubmit={handleSettingsSubmit}
-          aria-label="Study planner settings"
-          noValidate
-        >
-          {settingsError && (
-            <div className="error-message" role="alert">
-              <p>{settingsError}</p>
-            </div>
-          )}
-
-          {settingsSaved && (
-            <p className="settings-success" role="status">
-              Settings saved.
-            </p>
-          )}
-
-          <label htmlFor="studentName">Student name</label>
-          <input
-            id="studentName"
-            type="text"
-            value={studentName}
-            onChange={(event) => {
-              setStudentName(event.target.value);
-              setSettingsSaved(false);
-            }}
-            required
-          />
-
-          <label htmlFor="dailyStudyHours">Daily study hours</label>
-          <input
-            id="dailyStudyHours"
-            type="number"
-            min="1"
-            max="12"
-            value={dailyStudyHours}
-            onChange={(event) => {
-              setDailyStudyHours(event.target.value);
-              setSettingsSaved(false);
-            }}
-            required
-          />
-
-          <label htmlFor="preferredStudyTime">Preferred study time</label>
-          <select
-            id="preferredStudyTime"
-            value={preferredStudyTime}
-            onChange={(event) => {
-              setPreferredStudyTime(event.target.value);
-              setSettingsSaved(false);
-            }}
-          >
-            <option value="Morning">Morning</option>
-            <option value="Afternoon">Afternoon</option>
-            <option value="Evening">Evening</option>
-          </select>
-
-          <button type="submit">Save Settings</button>
-        </form>
-      </section>
-
       <form
           onSubmit={handleSubmit}
           aria-busy={loading}
@@ -464,13 +373,12 @@ The response must contain exactly ${daysRemaining} study days.
           }
           required
         />
-        <button
-          type="submit"
-          disabled={loading}
-          aria-disabled={loading}
-        >
-          {loading ? "Generating..." : "Generate Study Plan"}
-        </button>
+          <AnimatedActionButton
+            loading={loading}
+            success={success}
+            error={Boolean(error)}
+            type="submit"
+        />
         
       </form>
 
